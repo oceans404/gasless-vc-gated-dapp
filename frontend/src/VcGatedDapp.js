@@ -50,7 +50,6 @@ function VcGatedDapp() {
 
   useEffect(() => {
     if (publicClient) {
-      console.log(publicClient);
       const readCount = async () => {
         await readCounterValue();
       };
@@ -81,7 +80,6 @@ function VcGatedDapp() {
   }
 
   const incrementCounter = async () => {
-    console.log(connectedAddress);
     if (addressIsConnected) {
       try {
         const { request } = await publicClient.simulateContract({
@@ -90,11 +88,6 @@ function VcGatedDapp() {
           functionName: "increment",
         });
         const { hash } = await walletClient.writeContract(request);
-
-        // const { hash } = await walletClient.writeContract({
-        //   ...contractConfig,
-        //   functionName: "increment",
-        // });
         setIsLoading(true);
         await waitForTransaction({
           hash,
