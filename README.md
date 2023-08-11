@@ -1,12 +1,12 @@
 # This is a template for creating your own VC Gated Dapp
 
-This template spins up a dapp that is 
+This template spins up a dapp that is
 
--   ✅ Built with the popular [React JS](https://react.dev/) library
--   ✅ VC Gated with a [Polygon ID KYCAgeCredential](https://oceans404.notion.site/How-to-get-a-KYCAgeCredential-Verifiable-Credential-f3d34e7c98ec4147b6b2fae79066c4f6?pvs=4)
--   ✅ Fully connected with to all EVM chains including Polygon zkEVM Testnet and Polygon Mumbai Testnet [RainbowKit Wallet](https://www.rainbowkit.com/)
--   ✅ Beautifully styled with configurable components and icons from the [Chakra UI](https://chakra-ui.com/docs/components) library
--   ✅ Ready to interact with any smart contract thanks to working read and write examples from a Polygon zkEVM Testnet demo smart contract with [wagmi hooks](https://wagmi.sh/)
+- ✅ Built with the popular [React JS](https://react.dev/) library
+- ✅ VC Gated with a [Polygon ID KYCAgeCredential](https://oceans404.notion.site/How-to-get-a-KYCAgeCredential-Verifiable-Credential-f3d34e7c98ec4147b6b2fae79066c4f6?pvs=4)
+- ✅ Fully connected with to the Polygon Mumbai Testnet [RainbowKit Wallet](https://www.rainbowkit.com/)
+- ✅ Beautifully styled with configurable components and icons from the [Chakra UI](https://chakra-ui.com/docs/components) library
+- ✅ Ready to interact with any smart contract thanks to working read and write examples from a Polygon Mumbai Testnet demo smart contract with [wagmi hooks](https://wagmi.sh/)
 
 Use this template as a base to bootstrap a Polygon hackathon project **FAST** 🏃🏻‍♀️ so you can focus on your dapp's business logic & building the value layer of the internet. 🚀
 
@@ -16,7 +16,7 @@ Love or hate something about this template? Let me know by [tweeting your feedba
 
 Node requirement: **node v20.2.0**
 
-Here's how to check your node version. 
+Here's how to check your node version.
 
 ```bash
 node -v

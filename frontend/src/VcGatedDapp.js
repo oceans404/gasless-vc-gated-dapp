@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { createPublicClient, http } from "viem";
-import { polygonZkEvmTestnet } from "viem/chains";
 import {
   Box,
   Container,
@@ -13,46 +11,33 @@ import {
   Center,
   VStack,
 } from "@chakra-ui/react";
-import {
-  getAccount,
-  readContract,
-  writeContract,
-  waitForTransaction,
-} from "@wagmi/core";
+
+import { usePublicClient, useWalletClient } from "wagmi";
+
+import { getAccount, waitForTransaction } from "@wagmi/core";
 import demoAbi from "./demoSmartContract/demoAbi.json";
 
 function VcGatedDapp() {
-  const chain = polygonZkEvmTestnet;
-  const chainId = polygonZkEvmTestnet.id;
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
 
-  const [publicClient, setPublicClient] = useState();
   const [connectedAddress, setConnectedAddress] = useState();
   const [addressIsConnected, setAddressIsConnected] = useState(false);
   const [currentBlockNumber, setCurrentBlockNumber] = useState();
   const [showConnectionInfo, setShowConnectionInfo] = useState(false);
 
-  // variables specific to demo
-  const myZkEVMSmartContractAddress =
-    "0x3Baf2aa2aD287949590cD39a731fD17606c7D10F";
+  // variables specific to demo https://mumbai.polygonscan.com/address/0xa003003c47fb65291cb0b079cbd6028a7af60fa2#code
+  const mySmartContractAddress = "0xA003003C47fb65291CB0B079CBd6028a7aF60Fa2";
 
   const contractConfig = {
-    address: myZkEVMSmartContractAddress,
+    address: mySmartContractAddress,
     abi: demoAbi,
-    chainId,
   };
 
   const [count, setCount] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // A Public Client is an interface to "public" JSON-RPC API methods
-    // such as retrieving block numbers, transactions, reading from smart contracts, etc
-    const newPublicClient = createPublicClient({
-      chain,
-      transport: http(),
-    });
-    setPublicClient(newPublicClient);
-
     // interval check whether user has connected or disconnected wallet
     const interval = setInterval(() => {
       const { address, isConnected } = getAccount();
@@ -65,6 +50,7 @@ function VcGatedDapp() {
 
   useEffect(() => {
     if (publicClient) {
+      console.log(publicClient);
       const readCount = async () => {
         await readCounterValue();
       };
@@ -79,31 +65,44 @@ function VcGatedDapp() {
   }, [publicClient]);
 
   async function readCounterValue() {
-    try {
-      const data = await readContract({
-        ...contractConfig,
-        functionName: "retrieve",
-        chainId,
-      });
-      const newCount = JSON.parse(data);
-      setCount(newCount);
-      return newCount;
-    } catch (err) {
-      console.log("Error: ", err);
+    if (publicClient) {
+      try {
+        const data = await publicClient.readContract({
+          ...contractConfig,
+          functionName: "retrieve",
+        });
+        const newCount = JSON.parse(data);
+        setCount(newCount);
+        return newCount;
+      } catch (err) {
+        console.log("Error: ", err);
+      }
     }
   }
 
   const incrementCounter = async () => {
+    console.log(connectedAddress);
     if (addressIsConnected) {
-      const { hash } = await writeContract({
-        ...contractConfig,
-        functionName: "increment",
-        // args: [69],
-      });
-      setIsLoading(true);
-      const data = await waitForTransaction({
-        hash,
-      });
+      try {
+        const { request } = await publicClient.simulateContract({
+          ...contractConfig,
+          account: connectedAddress,
+          functionName: "increment",
+        });
+        const { hash } = await walletClient.writeContract(request);
+
+        // const { hash } = await walletClient.writeContract({
+        //   ...contractConfig,
+        //   functionName: "increment",
+        // });
+        setIsLoading(true);
+        await waitForTransaction({
+          hash,
+        });
+      } catch (err) {
+        console.log("Error: ", err);
+      }
+
       await readCounterValue();
       setIsLoading(false);
     } else {
@@ -144,6 +143,7 @@ function VcGatedDapp() {
                     <a
                       href="https://viem.sh/docs/clients/public.html"
                       target="_blank"
+                      rel="noreferrer"
                     >
                       public client
                     </a>{" "}
@@ -158,7 +158,11 @@ function VcGatedDapp() {
               ) : (
                 <>
                   Please install{" "}
-                  <a href="https://metamask.io/" target="_blank">
+                  <a
+                    href="https://metamask.io/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Metamask
                   </a>
                 </>
@@ -183,36 +187,33 @@ function VcGatedDapp() {
               <li>
                 Check out the Counter{" "}
                 <a
-                  href={`https://testnet-zkevm.polygonscan.com/address/${myZkEVMSmartContractAddress}`}
+                  href={`https://mumbai.polygonscan.com/address/${mySmartContractAddress}`}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   contract on Polygonscan
                 </a>{" "}
                 and the{" "}
                 <a
-                  href="https://github.com/oceans404/fullstack-zkevm/blob/complete/contracts/Counter.sol"
+                  href="https://github.com/oceans404/gasless-vc-gated-dapp/blob/main/frontend/src/demoSmartContract/Counter.sol"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   {" "}
                   contract code on Github
                 </a>
               </li>
               <li>
-                You need Polygon zkEVM Testnet ETH to update the counter value.{" "}
+                You need Polygon Mumbai Matic to update the counter value. Use
+                the{" "}
                 <a
-                  href="https://www.youtube.com/watch?v=eYZAPkTCgwg"
+                  href="https://mumbaifaucet.com/?r=zU2MTQwNTU5Mzc2M"
                   target="_blank"
+                  rel="noreferrer"
                 >
-                  Here's how to Get Polygon zkEVM Testnet ETH
+                  Mumbai Faucet
                 </a>{" "}
-                Use the{" "}
-                <a
-                  href="https://wallet.polygon.technology/?redirectOnConnect=%2FzkEVM-Bridge%2Fbridge"
-                  target="_blank"
-                >
-                  Native Bridge
-                </a>{" "}
-                to bridge Ethereum Goerli ETH to Polygon zkEVM testnet ETH
+                to get Mumbai Matic.
               </li>
             </ul>
           </div>

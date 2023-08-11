@@ -45,6 +45,8 @@ Update your .env with the REACT_APP_VERIFICATION_SERVER_PUBLIC_URL variable to y
 
 Visit https://cloud.walletconnect.com/ and create a new project (free and takes 2m). Update REACT_APP_WALLET_CONNECT_ID with the resulting Project ID.
 
+Update your .env with the REACT_APP_ALCHEMY_API_KEY_MUMBAI variable to your Alchemy API key for Polygon Mumbai.
+
 Quick check: Make sure you've updated these values in .env, not .env.sample 🤠
 
 #### 3. Start the frontend

@@ -108,9 +108,14 @@ function PolygonIDVerifier({
   return (
     <div>
       {sessionId ? (
-        <Button colorScheme="purple" onClick={onOpen} margin={4}>
-          Prove access rights
-        </Button>
+        <>
+          <Button colorScheme="purple" onClick={onOpen} margin={4}>
+            Prove access rights
+          </Button>
+          <Button onClick={() => reportVerificationResult(true)}>
+            Skip VC Check
+          </Button>
+        </>
       ) : (
         <Spinner />
       )}
